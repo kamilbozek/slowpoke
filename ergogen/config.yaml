@@ -1,0 +1,208 @@
+units:
+  # proxy units
+  kx: cx
+  ky: cy
+  # proxy units with padding
+  px: cx + 2
+  py: cy + 2
+  # mbk keycaps
+  capx: 17.5
+  capy: 16.5
+
+  mcu_padding: 1.2
+
+  # constants
+  promicro_x: 18.0
+  promicro_y: 33.0
+  trrs_x: 6.1
+  trrs_y: 12.1
+
+points:
+  zones:
+    matrix:
+      # Fix placement on KiCAD sheet.
+      anchor:
+        shift: [100, -100]
+      key:
+        padding: 1ky
+        spread: 1kx
+        autobind: 0
+      columns:
+        pinky:
+          key:
+            splay: 20
+            origin: [-kx/2, -ky/2]
+            bind: [0, px, 0, 0]
+          rows:
+            bottom.column_net: P14
+            home.column_net: P15
+            top.column_net: P18
+        ring:
+          key:
+            stagger: ky*0.85
+            splay: -10
+            origin: [-kx/2, -ky/2]
+            bind: [0, px, 0, 0]
+          rows:
+            bottom.column_net: P19
+            home.column_net: P20
+            top.column_net: P3
+        middle:
+          key:
+            stagger: ky/3
+            splay: -5
+            origin: [-kx/2, -ky/2]
+          rows:
+            bottom.column_net: P4
+            home.column_net: P5
+            top.column_net: P6
+        index:
+          key:
+            stagger: -ky/2
+            splay: -5
+            origin: [-kx/2, -ky/2]
+            bind: [0, 0, 0, px]
+          rows:
+            bottom.column_net: P7
+            home.column_net: P8
+            top.column_net: P9
+        inner:
+          key:
+            stagger: -ky/6-1.2 # -1.2 to make fillet=2 work nice
+          rows:
+            bottom.column_net: P2
+            home.column_net: P0
+            top.column_net: P1
+      rows:
+        bottom:
+        home:
+        top:
+    thumb:
+      key:
+        padding: 1ky
+        spread: 1kx
+      anchor:
+        ref: matrix_inner_bottom
+        shift: [-1,-24]
+      columns:
+        tucky:
+          key:
+            splay: -13
+            column_net: P16
+          rows:
+            only:
+              bind: [1py, 0.5px, 0, 3px]
+        reachy:
+          key:
+            splay: -10
+            origin: [-kx/2, -ky/2]
+            column_net: P10
+      rows:
+        only:
+    mcu:
+      anchor:
+        ref: matrix_inner_bottom
+        shift: [0.5px+mcu_padding+0.5promicro_x, 0.5promicro_y-0.5py]
+      key:
+        name: mcu
+        width: promicro_x
+        height: promicro_y
+        bind: [mcu_padding, mcu_padding, mcu_padding, mcu_padding]
+outlines:
+  _keys_outline:
+    - what: rectangle
+      bound: true
+      size: [px, py]
+      where:
+        - /matrix_.*/
+        - /thumb_.*/
+  _mcu_board:
+    - what: polygon
+      points:
+        - ref: mcu
+          shift: [-0.5promicro_x-mcu_padding, 0.5promicro_y]
+        - ref: mcu
+          shift: [0.5promicro_x+mcu_padding+trrs_x+mcu_padding, 0.5promicro_y]
+        - ref: mcu
+          shift: [0.5promicro_x+mcu_padding+trrs_x+mcu_padding, 0.5promicro_y-trrs_y-mcu_padding]
+        - ref: mcu
+          shift: [0.5promicro_x+mcu_padding, 0.5promicro_y-trrs_y-mcu_padding]
+        - ref: thumb_reachy_only
+          shift: [0.5px, 0.5py]
+        - ref: thumb_reachy_only
+          shift: [-0.5px, 0.5py]
+        - ref: mcu
+          shift: [-0.5promicro_x-mcu_padding, -0.5promicro_y-4]
+  raw:
+    - name: _keys_outline
+    - operation: add
+      name: _mcu_board
+  board:
+    - name: raw
+      fillet: 2
+  _debug_keycaps:
+    - what: rectangle
+      size: [capx, capy]
+      where:
+        - /matrix_.*/
+        - /thumb_.*/
+  _debug_mcu:
+    - what: rectangle
+      adjust.ref: mcu
+      size: [promicro_x, promicro_y]
+  debug:
+    - name: board
+    - operation: stack
+      name: _debug_keycaps
+    - operation: stack
+      name: _debug_mcu
+
+pcbs:
+  pcb:
+    outlines:
+      main:
+        outline: board
+    footprints:
+      choc_hotswap:
+        what: choc
+        where:
+          - /matrix_.*/
+          - /thumb_.*/
+        params:
+          keycaps: true
+          reverse: true
+          hotswap: true
+          from: "{{column_net}}"
+          to: "GND"
+      choc:
+        what: choc
+        adjust.rotate: 180
+        where:
+          - /matrix_.*/
+          - /thumb_.*/
+        params:
+          keycaps: false
+          reverse: true
+          hotswap: false
+          from: "{{column_net}}"
+          to: "GND"
+      mcu:
+        what: promicro
+        where:
+          ref: mcu
+          rotate: -90
+        params:
+          orientation: "up"
+      trrs:
+        what: trrs
+        where:
+          ref: mcu
+          shift: [0.5promicro_x+mcu_padding+0.5trrs_x+2.5, 0.5promicro_y]
+          rotate: 0
+        params:
+          A: GND
+          B: GND
+          C: P21
+          D: VCC
+          reverse: true
+          symmetric: true
