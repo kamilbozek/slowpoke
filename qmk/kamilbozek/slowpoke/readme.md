@@ -5,11 +5,11 @@ Slowpoke (ヤドン) is a 34-key split keyboard.
 * Keyboard Maintainer: [Kamil Bozek](https://github.com/kamilbozek)
 * Hardware Supported: Pro Micro
 
-Make example for this keyboard (after setting up your build environment):
+Build the QMK firmware (after setting up your build environment):
 
     make kamilbozek/slowpoke:default
 
-Flashing example for this keyboard:
+Flashing the keyboard:
 
     make kamilbozek/slowpoke:default:flash
 

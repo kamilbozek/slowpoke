@@ -7,8 +7,9 @@ Features:
 * supports Kailh hotswap sockets
 * reversible PCB
 
-![Slowpoke - right half](docs/images/slowpoke1.jpg)
-![Slowpoke - both halves](docs/images/slowpoke2.jpg) 
+![Slowpoke - top view](docs/images/slowpoke-top.jpg)
+![Slowpoke - angle view](docs/images/slowpoke-angle.jpg)
+![Slowpoke - bottom view](docs/images/slowpoke-bottom.jpg)
 
 ## Thanks
 * [@tapioki](https://github.com/tapioki) for [Architeuthis dux](https://github.com/tapioki/cephalopoda/tree/main/Architeuthis%20dux) which heavily inspired this keyboard
